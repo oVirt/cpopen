@@ -32,14 +32,16 @@ from subprocess import Popen, PIPE
 from createprocess import createProcess
 
 
-class cpopen(Popen):
-    def __init__(self, args, close_fds=False, cwd=None, env=None):
+class CPopen(Popen):
+    def __init__(self, args, close_fds=False, cwd=None, env=None,
+                 deathSignal=0):
         if not isinstance(args, list):
             args = list(args)
 
         if env is not None and not isinstance(env, list):
             env = list(("=".join(item) for item in env.iteritems()))
 
+        self._deathSignal = int(deathSignal)
         Popen.__init__(self, args,
                        close_fds=close_fds, cwd=cwd, env=env,
                        stdin=PIPE, stdout=PIPE,
@@ -57,7 +59,8 @@ class cpopen(Popen):
                                                        p2cread, p2cwrite,
                                                        c2pread, c2pwrite,
                                                        errread, errwrite,
-                                                       cwd, env)
+                                                       cwd, env,
+                                                       self._deathSignal)
 
             self.pid = pid
             self._closed = False
