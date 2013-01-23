@@ -12,6 +12,7 @@ URL:            http://pypi.python.org/pypi/cpopen
 Source0:        http://pypi.python.org/packages/source/c/cpopen/cpopen-%{version}.tar.gz
 
 BuildRequires: python2
+BuildRequires: python-devel
 
 %description
 Python package for creating subprocess in simpler and safer manner by using C code.
