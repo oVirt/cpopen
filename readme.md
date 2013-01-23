@@ -13,6 +13,8 @@ general use.
 
 # Usage
 
+```{.python}
 import cpopen
 proc = cpopen.CPopen(["echo", "3"])
 proc.communictate()
+```
