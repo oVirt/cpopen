@@ -7,18 +7,17 @@ Release:        1%{?dist}
 Summary:        Creates a subprocess in simpler safer manner
 
 License:        GPLv2+
-Group:		System Environment/Libraries
+Group:          System Environment/Libraries
 URL:            http://pypi.python.org/pypi/cpopen
 Source0:        http://pypi.python.org/packages/source/c/cpopen/cpopen-%{version}.tar.gz
 
-BuildRequires: python2
-BuildRequires: python-devel
+BuildRequires: python2-devel
 
 %description
 Python package for creating subprocess in simpler and safer manner by using C code.
 
 %prep
-%setup -q -n cpopen-%{version}
+%setup -q -n python-cpopen-%{version}
 
 %build
 
