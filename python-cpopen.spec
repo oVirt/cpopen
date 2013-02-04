@@ -20,6 +20,7 @@ Python package for creating subprocess in simpler and safer manner by using C co
 %setup -q -n python-cpopen-%{version}
 
 %build
+%{__python} setup.py build
 
 
 %install
