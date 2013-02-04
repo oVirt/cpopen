@@ -1,4 +1,3 @@
-%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
 %{!?python_ver: %global python_ver %(%{__python} -c "import sys ; print sys.version[:3]")}
 
 Name:           python-cpopen
@@ -24,12 +23,12 @@ Python package for creating subprocess in simpler and safer manner by using C co
 
 
 %install
-%{__python} setup.py install --root $RPM_BUILD_ROOT --install-lib %{python_sitelib}
+%{__python} setup.py install --root $RPM_BUILD_ROOT --install-lib %{python_sitearch}
 
 %files
-%{python_sitelib}/createprocess.so*
-%{python_sitelib}/cpopen.py*
-%{python_sitelib}/cpopen-%{version}-py*.egg-info
+%{python_sitearch}/createprocess.so*
+%{python_sitearch}/cpopen.py*
+%{python_sitearch}/cpopen-%{version}-py*.egg-info
 
 %changelog
 * Sun Jan 20 2013 Yaniv Bronhaim <ybronhei@redhat.com> 1.0
