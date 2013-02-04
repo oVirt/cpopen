@@ -3,7 +3,7 @@
 Name:           python-cpopen
 Version:        1.0
 Release:        1%{?dist}
-Summary:        Creates a subprocess in simpler safer manner
+Summary:        Creates a sub-process in simpler safer manner
 
 License:        GPLv2+
 Group:          System Environment/Libraries
@@ -13,7 +13,8 @@ Source0:        http://pypi.python.org/packages/source/c/cpopen/cpopen-%{version
 BuildRequires: python2-devel
 
 %description
-Python package for creating subprocess in simpler and safer manner by using C code.
+Python package for creating sub-process in simpler and safer manner by using C
+code.
 
 %prep
 %setup -q -n python-cpopen-%{version}
@@ -23,7 +24,8 @@ Python package for creating subprocess in simpler and safer manner by using C co
 
 
 %install
-%{__python} setup.py install --root $RPM_BUILD_ROOT --install-lib %{python_sitearch}
+%{__python} setup.py install --root $RPM_BUILD_ROOT \
+                             --install-lib %{python_sitearch}
 
 %files
 %{python_sitearch}/createprocess.so*
