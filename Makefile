@@ -1,4 +1,4 @@
-VERSION=1.0
+VERSION=1.1
 TAR_FILE=cpopen-$(VERSION).tar.gz
 
 DIST=createprocess.c \

@@ -1,7 +1,7 @@
 %{!?python_ver: %global python_ver %(%{__python} -c "import sys ; print sys.version[:3]")}
 
 Name:           python-cpopen
-Version:        1.0
+Version:        1.1
 Release:        1%{?dist}
 Summary:        Creates a sub-process in simpler safer manner
 
@@ -17,7 +17,7 @@ Python package for creating sub-process in simpler and safer manner by using C
 code.
 
 %prep
-%setup -q -n python-cpopen-%{version}
+%setup -q -n cpopen-%{version}
 
 %build
 %{__python} setup.py build
