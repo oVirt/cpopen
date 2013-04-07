@@ -1,10 +1,10 @@
 from distutils.core import setup, Extension
 
-module1 = Extension('createprocess',
-                    sources=['createprocess.c'])
+module1 = Extension('cpopen-createprocess',
+                    sources=['cpopen-createprocess.c'])
 
 setup(name='cpopen',
-      version='1.1',
+      version='1.2.1',
       description='Creates a subprocess in simpler safer manner',
       py_modules=['cpopen'],
       author='Yaniv Bronhaim',
