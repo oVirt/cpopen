@@ -39,11 +39,11 @@ CreateProcessMethods[] = {
 };
 
 PyMODINIT_FUNC
-initcreateprocess(void)
+initcpopen(void)
 {
     PyObject *m;
 
-    m = Py_InitModule("createprocess", CreateProcessMethods);
+    m = Py_InitModule("cpopen", CreateProcessMethods);
 
     /* In the future put other init code after this condition. */
     if (m == NULL)

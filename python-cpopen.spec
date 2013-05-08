@@ -1,7 +1,7 @@
 %{!?python_ver: %global python_ver %(%{__python} -c "import sys ; print sys.version[:3]")}
 
 Name:           python-cpopen
-Version:        1.2.1
+Version:        1.2.2
 Release:        1%{?dist}
 Summary:        Creates a sub-process in simpler safer manner
 
@@ -28,13 +28,16 @@ code.
                              --install-lib %{python_sitearch}
 
 %files
-%{python_sitearch}/cpopen-createprocess.so*
-%{python_sitearch}/cpopen.py*
+%{python_sitearch}/cpopen.so*
+%{python_sitearch}/__init__.py*
 %{python_sitearch}/cpopen-%{version}-py*.egg-info
 
-%attr(755, root, root) %{python_sitearch}/cpopen-createprocess.so*
+%attr(755, root, root) %{python_sitearch}/cpopen.so*
 
 %changelog
+* Wed May 08 2013 Yaniv Bronhaim <ybronhei@redhat.com> 1.2.2
+- Merging vdsm-python-cpopen fixes
+
 * Tue Mar 19 2013 Yaniv Bronhaim <ybronhei@redhat.com> 1.2.1
 - Changing ownership and mod of cpopen-createprocess.so file
 
