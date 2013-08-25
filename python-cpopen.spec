@@ -1,7 +1,8 @@
 %{!?python_ver: %global python_ver %(%{__python} -c "import sys ; print sys.version[:3]")}
-%global __provides_exclude_from ^(%{python_sitearch}|%{python3_sitearch})/.*\\.so$
+%global __provides_exclude_from ^%{python_sitearch}/.*\\.so$
+%global libname cpopen
 
-Name:           python-cpopen
+Name:           python-%{libname}
 Version:        1.2.3
 Release:        1%{?dist}
 Summary:        Creates a sub-process in simpler safer manner
@@ -18,7 +19,7 @@ Python package for creating sub-process in simpler and safer manner by using C
 code.
 
 %prep
-%setup -q -n cpopen-%{version}
+%setup -q -n %{libname}-%{version}
 
 %build
 %{__python} setup.py build
@@ -26,13 +27,13 @@ code.
 
 %install
 %{__python} setup.py install --root $RPM_BUILD_ROOT \
-                             --install-lib %{python_sitearch}
+			     --install-lib %{python_sitearch}/%{libname}
 
 %files
-%doc AUTHORS COPYING MANIFEST
-%{python_sitearch}/cpopen/__init__.py*
-%{python_sitearch}/cpopen/cpopen-%{version}-py*.egg-info
-%attr(755, root, root) %{python_sitearch}/cpopen/cpopen.so*
+%doc AUTHORS COPYING readme.md
+%{python_sitearch}/%{libname}/__init__.py*
+%{python_sitearch}/%{libname}/%{libname}-%{version}-py*.egg-info
+%attr(755, root, root) %{python_sitearch}/%{libname}/%{libname}.so*
 
 %changelog
 * Sun Aug 25 2013 Yaniv Bronhaim <ybronhei@redhat.com> - 1.2.3
