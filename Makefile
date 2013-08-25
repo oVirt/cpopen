@@ -1,8 +1,8 @@
-VERSION=1.0
+VERSION=1.2.3
 TAR_FILE=cpopen-$(VERSION).tar.gz
 
-DIST=createprocess.c \
-     cpopen.py \
+DIST=cpopen.c \
+     __init__.py \
      setup.py \
      python-cpopen.spec
      $(NULL)
