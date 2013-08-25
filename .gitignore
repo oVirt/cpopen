@@ -1,5 +1,8 @@
 build/
+dist/
 *.swp
+*.swo
 *~
 *.pyc
 cpopen-*.tar.gz
+MANIFEST

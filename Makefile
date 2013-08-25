@@ -1,27 +1,36 @@
 VERSION=1.2.3
-TAR_FILE=cpopen-$(VERSION).tar.gz
+NAME=cpopen
+FULL_NAME=${NAME}-${VERSION}
+TAR_FILE=${FULL_NAME}.tar.gz
 
-DIST=cpopen.c \
-     __init__.py \
-     setup.py \
-     python-cpopen.spec
-     $(NULL)
+SOURCESDIR=${HOME}/rpmbuild/SOURCES/
 
-all: build
+SPECFILE=python-cpopen.spec
 
-.PHONY: build rpm srpm
+DIST=dist
 
-build: $(DIST)
+TAR_DIST_LOCATION=${DIST}/${TAR_FILE}
+TAR_RPM_LOCATION=${SOURCESDIR}/${TAR_FILE}
+
+all: ${TAR_FILE}
+
+.PHONY: build rpm srpm ${TAR_DIST_LOCATION}
+
+build:
 	python setup.py build
 
-$(TAR_FILE): $(DIST)
-	tar --transform 's,^,python-cpopen-${VERSION}/,S' -cvf $@ $(DIST)
+$(TAR_DIST_LOCATION):
+	mkdir -p dist
+	python setup.py sdist
 
-srpm: python-cpopen.spec $(TAR_FILE)
-	rpmbuild -ts $(TAR_FILE)
+${TAR_RPM_LOCATION}: ${TAR_DIST_LOCATION}
+	cp "$<" "$@"
 
-rpm: python-cpopen.spec $(TAR_FILE)
-	rpmbuild -ta $(TAR_FILE)
+srpm: ${SPECFILE} $(TAR_RPM_LOCATION)
+	rpmbuild -bs python-cpopen.spec
+
+rpm: ${SPECFILE} ${TAR_RPM_LOCATION}
+	rpmbuild -ba python-cpopen.spec
 
 clean:
 	python setup.py clean
