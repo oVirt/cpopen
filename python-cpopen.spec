@@ -36,10 +36,10 @@ code.
 %attr(755, root, root) %{python_sitearch}/%{libname}/%{libname}.so*
 
 %changelog
-* Mon Aug 16 2013 Yaniv Bronhaim <ybronhei@redhat.com> - 1.2.3-1
+* Mon Aug 26 2013 Yaniv Bronhaim <ybronhei@redhat.com> - 1.2.3-2
 - Fixing import error in __init__.py
 
-* Sun Aug 25 2013 Yaniv Bronhaim <ybronhei@redhat.com> - 1.2.3
+* Sun Aug 25 2013 Yaniv Bronhaim <ybronhei@redhat.com> - 1.2.3-1
 - Moving files under cpopen folder
 
 * Wed Jun 12 2013 Yaniv Bronhaim <ybronhei@redhat.com> - 1.2.2-1
