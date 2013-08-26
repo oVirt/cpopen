@@ -4,7 +4,7 @@
 
 Name:           python-%{libname}
 Version:        1.2.3
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Creates a sub-process in simpler safer manner
 
 License:        GPLv2+
@@ -36,6 +36,9 @@ code.
 %attr(755, root, root) %{python_sitearch}/%{libname}/%{libname}.so*
 
 %changelog
+* Mon Aug 16 2013 Yaniv Bronhaim <ybronhei@redhat.com> - 1.2.3-1
+- Fixing import error in __init__.py
+
 * Sun Aug 25 2013 Yaniv Bronhaim <ybronhei@redhat.com> - 1.2.3
 - Moving files under cpopen folder
 
