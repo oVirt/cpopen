@@ -16,5 +16,5 @@ general use.
 ```{.python}
 import cpopen
 proc = cpopen.CPopen(["echo", "3"])
-proc.communictate()
+proc.communicate()
 ```

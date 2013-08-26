@@ -29,7 +29,7 @@ forking. This allows for faster safer exec.
 import os
 from subprocess import Popen, PIPE
 
-from createprocess import createProcess
+from cpopen import createProcess
 
 
 class CPopen(Popen):
