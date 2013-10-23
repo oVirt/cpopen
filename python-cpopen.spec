@@ -4,7 +4,7 @@
 
 Name:           python-%{libname}
 Version:        1.2.3
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Creates a sub-process in simpler safer manner
 
 License:        GPLv2+
@@ -13,6 +13,8 @@ URL:            http://pypi.python.org/pypi/cpopen
 Source0:        http://bronhaim.fedorapeople.org/cpopen-%{version}.tar.gz
 
 BuildRequires: python2-devel
+Provides: vdsm-python-cpopen = %{version}-%{release}
+Obsoletes: vdsm-python-cpopen <= 4.13.0-49
 
 %description
 Python package for creating sub-process in simpler and safer manner by using C
@@ -36,6 +38,9 @@ code.
 %attr(755, root, root) %{python_sitearch}/%{libname}/%{libname}.so*
 
 %changelog
+* Wed Oct 23 2013 Yaniv Bronhaim <ybronhei@redhat.com> - 1.2.3-3
+- Override old packages with same file names
+
 * Mon Aug 26 2013 Yaniv Bronhaim <ybronhei@redhat.com> - 1.2.3-2
 - Fixing import error in __init__.py
 
