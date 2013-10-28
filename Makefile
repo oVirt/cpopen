@@ -35,3 +35,4 @@ rpm: ${SPECFILE} ${TAR_RPM_LOCATION}
 clean:
 	python setup.py clean
 	rm -rf $(DIST)
+	rm -rf build

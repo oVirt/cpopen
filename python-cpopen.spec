@@ -4,7 +4,7 @@
 
 Name:           python-%{libname}
 Version:        1.2.3
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Creates a sub-process in simpler safer manner
 
 License:        GPLv2+
@@ -38,6 +38,9 @@ code.
 %attr(755, root, root) %{python_sitearch}/%{libname}/%{libname}.so*
 
 %changelog
+* Mon Oct 28 2013 Yaniv Bronhaim <ybronhei@redhat.com> - 1.2.3-4
+- Wrong code were packed on previous release
+
 * Wed Oct 23 2013 Yaniv Bronhaim <ybronhei@redhat.com> - 1.2.3-3
 - Override old packages with same file names
 
