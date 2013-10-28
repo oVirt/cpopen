@@ -12,7 +12,7 @@ DIST=dist
 TAR_DIST_LOCATION=${DIST}/${TAR_FILE}
 TAR_RPM_LOCATION=${SOURCESDIR}/${TAR_FILE}
 
-all: ${TAR_FILE}
+all: ${TAR_DIST_LOCATION}
 
 .PHONY: build rpm srpm ${TAR_DIST_LOCATION}
 
@@ -34,4 +34,4 @@ rpm: ${SPECFILE} ${TAR_RPM_LOCATION}
 
 clean:
 	python setup.py clean
-	rm -rf $(TAR_FILE)
+	rm -rf $(DIST)
