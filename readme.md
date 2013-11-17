@@ -18,3 +18,10 @@ import cpopen
 proc = cpopen.CPopen(["echo", "3"])
 proc.communicate()
 ```
+
+# Running the tests
+
+```{.bash}
+cd tests
+nosetests tests.py
+```

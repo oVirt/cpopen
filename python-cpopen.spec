@@ -28,13 +28,12 @@ code.
 
 
 %install
-%{__python} setup.py install --root $RPM_BUILD_ROOT \
-			     --install-lib %{python_sitearch}/%{libname}
+%{__python} setup.py install --root $RPM_BUILD_ROOT
 
 %files
 %doc AUTHORS COPYING readme.md
 %{python_sitearch}/%{libname}/__init__.py*
-%{python_sitearch}/%{libname}/%{libname}-%{version}-py*.egg-info
+%{python_sitearch}/%{libname}-%{version}-py*.egg-info
 %attr(755, root, root) %{python_sitearch}/%{libname}/%{libname}.so*
 
 %changelog

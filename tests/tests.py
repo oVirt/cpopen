@@ -32,7 +32,7 @@ EXT_ECHO = "/bin/echo"
 if __name__ != "__main__":
     # This will not be available when we use this module as a subprocess
     import glob
-    for p in glob.glob("build/*/"):
+    for p in glob.glob("../build/*/"):
         sys.path.append(p)
 
     from cpopen import CPopen
