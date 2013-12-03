@@ -34,13 +34,14 @@ from cpopen import createProcess
 
 class CPopen(Popen):
     def __init__(self, args, close_fds=False, cwd=None, env=None,
-                 deathSignal=0):
+                 deathSignal=0, childUmask=None):
         if not isinstance(args, list):
             args = list(args)
 
         if env is not None and not isinstance(env, list):
             env = list(("=".join(item) for item in env.iteritems()))
 
+        self._childUmask = childUmask
         self._deathSignal = int(deathSignal)
         Popen.__init__(self, args,
                        close_fds=close_fds, cwd=cwd, env=env,
@@ -60,7 +61,8 @@ class CPopen(Popen):
                                                        c2pread, c2pwrite,
                                                        errread, errwrite,
                                                        cwd, env,
-                                                       self._deathSignal)
+                                                       self._deathSignal,
+                                                       self._childUmask)
 
             self.pid = pid
             self._closed = False
