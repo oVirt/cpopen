@@ -172,6 +172,20 @@ fail:
     return NULL;
 }
 
+static long
+pyTryIntToLong(PyObject *intNum, int *gotIt) {
+    long value = 0;
+    if (PyInt_Check(intNum)) {
+        value = PyInt_AsLong(intNum);
+        if (value == -1 && PyErr_Occurred()) {
+            *gotIt = 0;
+        } else {
+            *gotIt = 1;
+        }
+    }
+    return value;
+}
+
 /* Python's implementation of Popen forks back to python before execing.
  * Forking a python proc is a very complex and volatile process.
  *
@@ -201,13 +215,16 @@ createProcess(PyObject *self, PyObject *args)
 
     char** argv = NULL;
     char** envp = NULL;
+    PyObject *childUmask;
+    int hasUmask = 0;
+    int mask;
 
-    if (!PyArg_ParseTuple(args, "O!iiiiiiizOi:createProcess;",
+    if (!PyArg_ParseTuple(args, "O!iiiiiiizOiO:createProcess;",
                 &PyList_Type, &pyArgList, &close_fds,
                 &outfd[0], &outfd[1],
                 &in1fd[0], &in1fd[1],
                 &in2fd[0], &in2fd[1],
-                &cwd, &pyEnvList, &deathSignal)) {
+                &cwd, &pyEnvList, &deathSignal, &childUmask)) {
         return NULL;
     }
 
@@ -221,6 +238,12 @@ createProcess(PyObject *self, PyObject *args)
         if (!envp) {
             goto fail;
         }
+    }
+
+    /* failure is not critical, we just leave umask as it is. */
+    mask = pyTryIntToLong(childUmask, &hasUmask);
+    if (mask < 0) {
+        hasUmask = 0;
     }
 
     if(pipe(errnofd) < 0) {
@@ -288,6 +311,10 @@ try_fork:
             setenv("PWD", cwd, 1);
         }
 exec:
+        if (hasUmask) {
+            umask(mask);
+        }
+
         if (envp) {
             execvpe(argv[0], argv, envp);
         } else {

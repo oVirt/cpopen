@@ -19,6 +19,7 @@
 #
 import os
 import sys
+import stat
 import subprocess
 from nose.plugins.skip import SkipTest
 import signal
@@ -171,6 +172,25 @@ class TestCPopen(TestCase):
         start = time.time()
         procPtr[0].wait()
         self.assertTrue(time.time() - start < 1)
+
+    def testUmaskChange(self):
+        p = CPopen(['umask'], childUmask=0o007)
+        p.wait()
+        out = p.stdout.readlines()
+        self.assertEquals(out[0].strip(), '0007')
+
+    def testUmaskTmpfile(self):
+        name = os.tempnam()
+        p = CPopen(['touch', name], childUmask=0o007)
+        p.wait()
+        data = os.stat(name)
+        os.unlink(name)
+        self.assertTrue(data.st_mode & stat.S_IROTH == 0,
+                        "%s is world-readable" % name)
+        self.assertTrue(data.st_mode & stat.S_IWOTH == 0,
+                        "%s is world-writeable" % name)
+        self.assertTrue(data.st_mode & stat.S_IXOTH == 0,
+                        "%s is world-executable" % name)
 
 
 if __name__ == "__main__":
