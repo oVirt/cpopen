@@ -44,9 +44,9 @@ class CPopen(Popen):
 
         self._childUmask = childUmask
         if sys.version_info[0:3] >= (2, 7, 6):
-            self._execute_child = self._execute_child276
+            self._execute_child = self._execute_child_v276
         else:
-            self._execute_child = self._execute_child275
+            self._execute_child = self._execute_child_v275
 
         self._deathSignal = int(deathSignal)
         Popen.__init__(self, args,
@@ -54,36 +54,21 @@ class CPopen(Popen):
                        stdin=PIPE, stdout=PIPE,
                        stderr=PIPE)
 
-    def _execute_child276(self, args, executable, preexec_fn, close_fds,
+    def _execute_child_v276(self, args, executable, preexec_fn, close_fds,
                        cwd, env, universal_newlines,
                        startupinfo, creationflags, shell, to_close,
                        p2cread, p2cwrite,
                        c2pread, c2pwrite,
                        errread, errwrite):
 
-        try:
-            pid, stdin, stdout, stderr = createProcess(args, close_fds,
-                                                       p2cread, p2cwrite,
-                                                       c2pread, c2pwrite,
-                                                       errread, errwrite,
-                                                       cwd, env,
-                                                       self._deathSignal,
-                                                       self._childUmask)
+        return self._execute_child_v275(args, executable, preexec_fn,
+            close_fds, cwd, env, universal_newlines,
+            startupinfo, creationflags, shell,
+            p2cread, p2cwrite,
+            c2pread, c2pwrite,
+            errread, errwrite)
 
-            self.pid = pid
-            self._closed = False
-            self._returncode = None
-        except:
-            os.close(p2cwrite)
-            os.close(errread)
-            os.close(c2pread)
-            raise
-        finally:
-            os.close(p2cread)
-            os.close(errwrite)
-            os.close(c2pwrite)
-
-    def _execute_child275(self, args, executable, preexec_fn, close_fds,
+    def _execute_child_v275(self, args, executable, preexec_fn, close_fds,
                        cwd, env, universal_newlines,
                        startupinfo, creationflags, shell,
                        p2cread, p2cwrite,
