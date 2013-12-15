@@ -28,15 +28,14 @@ import time
 
 from unittest import TestCase
 
+import glob
+for p in glob.glob("../build/*/"):
+    sys.path.append(p)
+
+from cpopen import CPopen
+
 EXT_ECHO = "/bin/echo"
-
-if __name__ != "__main__":
-    # This will not be available when we use this module as a subprocess
-    import glob
-    for p in glob.glob("../build/*/"):
-        sys.path.append(p)
-
-    from cpopen import CPopen
+EXT_HELPER = os.path.join(os.path.dirname(__file__), 'helper.py')
 
 
 class TestCPopen(TestCase):
@@ -58,7 +57,7 @@ class TestCPopen(TestCase):
             self.assertEquals(p.stdout.read(), f.read())
 
     def _subTest(self, name, params, *args, **kwargs):
-        p = CPopen(["python", __file__, name] + params,
+        p = CPopen(["python", EXT_HELPER, name] + params,
                    *args, **kwargs)
         p.wait()
         self.assertTrue(p.returncode == 0,
@@ -191,26 +190,3 @@ class TestCPopen(TestCase):
                         "%s is world-writeable" % name)
         self.assertTrue(data.st_mode & stat.S_IXOTH == 0,
                         "%s is world-executable" % name)
-
-
-if __name__ == "__main__":
-    cmd = sys.argv[1]
-    if cmd == "fds":
-        try:
-            os.close(int(sys.argv[2]))
-            print "False"
-        except:
-            print "True"
-
-    elif cmd == "nofds":
-        try:
-            os.close(int(sys.argv[2]))
-            print "True"
-        except:
-            print "False"
-
-    elif cmd == "env":
-        try:
-            print os.environ.get("TEST", "False")
-        except:
-            print "False"
