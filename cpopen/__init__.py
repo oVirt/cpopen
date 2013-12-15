@@ -43,11 +43,6 @@ class CPopen(Popen):
             env = list(("=".join(item) for item in env.iteritems()))
 
         self._childUmask = childUmask
-        if sys.version_info[0:3] >= (2, 7, 6):
-            self._execute_child = self._execute_child_v276
-        else:
-            self._execute_child = self._execute_child_v275
-
         self._deathSignal = int(deathSignal)
         Popen.__init__(self, args,
                        close_fds=close_fds, cwd=cwd, env=env,
@@ -96,3 +91,8 @@ class CPopen(Popen):
             os.close(p2cread)
             os.close(errwrite)
             os.close(c2pwrite)
+
+    if sys.version_info[0:3] >= (2, 7, 6):
+        _execute_child = _execute_child_v276
+    else:
+        _execute_child = _execute_child_v275
