@@ -27,6 +27,7 @@ forking. This allows for faster safer exec.
 """
 
 import os
+import sys
 from subprocess import Popen, PIPE
 
 from cpopen import createProcess
@@ -48,7 +49,21 @@ class CPopen(Popen):
                        stdin=PIPE, stdout=PIPE,
                        stderr=PIPE)
 
-    def _execute_child(self, args, executable, preexec_fn, close_fds,
+    def _execute_child_v276(self, args, executable, preexec_fn, close_fds,
+                       cwd, env, universal_newlines,
+                       startupinfo, creationflags, shell, to_close,
+                       p2cread, p2cwrite,
+                       c2pread, c2pwrite,
+                       errread, errwrite):
+
+        return self._execute_child_v275(args, executable, preexec_fn,
+            close_fds, cwd, env, universal_newlines,
+            startupinfo, creationflags, shell,
+            p2cread, p2cwrite,
+            c2pread, c2pwrite,
+            errread, errwrite)
+
+    def _execute_child_v275(self, args, executable, preexec_fn, close_fds,
                        cwd, env, universal_newlines,
                        startupinfo, creationflags, shell,
                        p2cread, p2cwrite,
@@ -76,3 +91,8 @@ class CPopen(Popen):
             os.close(p2cread)
             os.close(errwrite)
             os.close(c2pwrite)
+
+    if sys.version_info[0:3] >= (2, 7, 6):
+        _execute_child = _execute_child_v276
+    else:
+        _execute_child = _execute_child_v275
