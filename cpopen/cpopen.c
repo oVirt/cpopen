@@ -1,5 +1,5 @@
 /*
-* Copyright 2012 Red Hat, Inc.
+* Copyright 2012-2014 Red Hat, Inc.
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -359,14 +359,16 @@ sendErrno:
         }
 
         if (childErrno != 0) {
-            PyErr_SetString(PyExc_OSError, strerror(childErrno));
+            errno = childErrno;
+            PyErr_SetFromErrno(PyExc_OSError);
             goto fail;
         }
     }
 
     /* error sync point */
     if (read(errnofd[0], &childErrno, sizeof(int)) == sizeof(int)) {
-        PyErr_SetString(PyExc_OSError, strerror(childErrno));
+        errno = childErrno;
+        PyErr_SetFromErrno(PyExc_OSError);
         goto fail;
     }
 

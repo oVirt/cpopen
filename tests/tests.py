@@ -1,5 +1,5 @@
 #
-# Copyright 2012 Red Hat, Inc.
+# Copyright 2012-2014 Red Hat, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 #
 # Refer to the README and COPYING files for full details of the license
 #
+import errno
 import os
 import sys
 import stat
@@ -190,3 +191,11 @@ class TestCPopen(TestCase):
                         "%s is world-writeable" % name)
         self.assertTrue(data.st_mode & stat.S_IXOTH == 0,
                         "%s is world-executable" % name)
+
+    def testNoEnt(self):
+        try:
+            CPopen(['there-is-no-executable-with-this/funny/name'])
+        except OSError as ose:
+            self.assertEquals(ose.errno, errno.ENOENT)
+        else:
+            self.fail('OSError not raised')
