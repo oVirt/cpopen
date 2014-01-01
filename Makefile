@@ -3,7 +3,7 @@ NAME=cpopen
 FULL_NAME=${NAME}-${VERSION}
 TAR_FILE=${FULL_NAME}.tar.gz
 
-SOURCESDIR=${HOME}/rpmbuild/SOURCES/
+SOURCESDIR=$(shell rpm --eval "%{_sourcedir}")
 
 SPECFILE=python-cpopen.spec
 
