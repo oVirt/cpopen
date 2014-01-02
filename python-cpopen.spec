@@ -4,7 +4,7 @@
 
 Name:           python-%{libname}
 Version:        1.2.3
-Release:        4%{?dist}
+Release:        7%{?dist}
 Summary:        Creates a sub-process in simpler safer manner
 
 License:        GPLv2+
@@ -13,8 +13,8 @@ URL:            http://pypi.python.org/pypi/cpopen
 Source0:        http://bronhaim.fedorapeople.org/cpopen-%{version}.tar.gz
 
 BuildRequires: python2-devel
-Provides: vdsm-python-cpopen = %{version}-%{release}
-Obsoletes: vdsm-python-cpopen <= 4.13.0-49
+Provides: vdsm-python-cpopen = 4.13.2
+Obsoletes: vdsm-python-cpopen <= 4.14
 
 %description
 Python package for creating sub-process in simpler and safer manner by using C
@@ -37,6 +37,15 @@ code.
 %attr(755, root, root) %{python_sitearch}/%{libname}/%{libname}.so*
 
 %changelog
+* Thu Jan 2 2014 Yaniv Bronhaim <ybronhei@redhat.com> - 1.2.3-7
+- Changing Obsoletes and Provides of vdsm-python-cpopen package
+
+* Wed Dec 25 2013 Yaniv Bronhaim <ybronhei@redhat.com> - 1.2.3-6
+- Bumping version for RHEL build
+
+* Wed Dec 11 2013 Yaniv Bronhaim <ybronhei@redhat.com> - 1.2.3-5
+- Adding umask configuration to the child process
+
 * Mon Oct 28 2013 Yaniv Bronhaim <ybronhei@redhat.com> - 1.2.3-4
 - Wrong code were packed on previous release
 
