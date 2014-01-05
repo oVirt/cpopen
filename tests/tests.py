@@ -26,6 +26,8 @@ from nose.plugins.skip import SkipTest
 import signal
 import threading
 import time
+import tempfile
+import posix
 
 from unittest import TestCase
 
@@ -180,7 +182,8 @@ class TestCPopen(TestCase):
         self.assertEquals(out[0].strip(), '0007')
 
     def testUmaskTmpfile(self):
-        name = os.tempnam()
+        tmp_dir = tempfile.mkdtemp()
+        name = os.path.join(tmp_dir, "file.txt")
         p = CPopen(['touch', name], childUmask=0o007)
         p.wait()
         data = os.stat(name)
@@ -191,6 +194,7 @@ class TestCPopen(TestCase):
                         "%s is world-writeable" % name)
         self.assertTrue(data.st_mode & stat.S_IXOTH == 0,
                         "%s is world-executable" % name)
+        posix.rmdir(tmp_dir)
 
     def testNoEnt(self):
         try:
