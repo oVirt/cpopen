@@ -14,10 +14,13 @@ TAR_RPM_LOCATION=${SOURCESDIR}/${TAR_FILE}
 
 all: build
 
-.PHONY: build rpm srpm ${TAR_DIST_LOCATION} dist
+.PHONY: build rpm srpm ${TAR_DIST_LOCATION} check-local dist
 
 build:
 	python setup.py build
+
+check-local: build
+	cd tests && nosetests tests.py
 
 dist: $(TAR_DIST_LOCATION)
 
