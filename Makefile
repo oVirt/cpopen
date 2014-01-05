@@ -12,12 +12,14 @@ DIST=dist
 TAR_DIST_LOCATION=${DIST}/${TAR_FILE}
 TAR_RPM_LOCATION=${SOURCESDIR}/${TAR_FILE}
 
-all: ${TAR_DIST_LOCATION}
+all: build
 
-.PHONY: build rpm srpm ${TAR_DIST_LOCATION}
+.PHONY: build rpm srpm ${TAR_DIST_LOCATION} dist
 
 build:
 	python setup.py build
+
+dist: $(TAR_DIST_LOCATION)
 
 $(TAR_DIST_LOCATION):
 	mkdir -p dist
