@@ -28,12 +28,21 @@ import threading
 import time
 import tempfile
 import posix
+import sysconfig
 
 from unittest import TestCase
 
-import glob
-for p in glob.glob("../build/*/"):
-    sys.path.append(p)
+
+def distutils_dir_name(dname):
+    """Returns the name of a distutils build directory"""
+    f = "{dirname}.{platform}-{version[0]}.{version[1]}"
+    return f.format(dirname=dname,
+                    platform=sysconfig.get_platform(),
+                    version=sys.version_info)
+
+
+BUILD_DIR = os.path.join("..", "build", distutils_dir_name("lib"))
+sys.path = [BUILD_DIR] + sys.path
 
 from cpopen import CPopen
 
