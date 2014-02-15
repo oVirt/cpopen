@@ -80,8 +80,6 @@ class CPopen(Popen):
                                                        self._childUmask)
 
             self.pid = pid
-            self._closed = False
-            self._returncode = None
         except:
             os.close(p2cwrite)
             os.close(errread)
