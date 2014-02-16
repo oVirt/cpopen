@@ -83,14 +83,23 @@ class CPopen(Popen):
             self._closed = False
             self._returncode = None
         except:
-            os.close(p2cwrite)
-            os.close(errread)
-            os.close(c2pread)
-            raise
-        finally:
-            os.close(p2cread)
-            os.close(errwrite)
-            os.close(c2pwrite)
+            # Keep the original exception and reraise it after all fds are
+            # closed, ignoring error during close. This is needed only for
+            # Python 2.6, as Python 2.7 already does this when _execute_child
+            # raises.
+            t, v, tb = sys.exc_info()
+            for fd in (p2cread, p2cwrite, c2pread, c2pwrite, errread, errwrite):
+                try:
+                    os.close(fd)
+                except:
+                    pass
+            raise t, v, tb
+
+        # If child was started, close the unused fds on the parent side. Note
+        # that we don't want to hide exceptions here.
+        os.close(p2cread)
+        os.close(errwrite)
+        os.close(c2pwrite)
 
     if sys.version_info[0:3] >= (2, 7, 6):
         _execute_child = _execute_child_v276
