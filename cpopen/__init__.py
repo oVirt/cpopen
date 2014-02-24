@@ -80,8 +80,6 @@ class CPopen(Popen):
                                                        self._childUmask)
 
             self.pid = pid
-            self._closed = False
-            self._returncode = None
         except:
             # Keep the original exception and reraise it after all fds are
             # closed, ignoring error during close. This is needed only for
