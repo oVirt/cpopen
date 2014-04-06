@@ -3,8 +3,8 @@
 %global libname cpopen
 
 Name:           python-%{libname}
-Version:        1.2.3
-Release:        7%{?dist}
+Version:        1.3
+Release:        0%{?dist}
 Summary:        Creates a sub-process in simpler safer manner
 
 License:        GPLv2+
@@ -37,6 +37,9 @@ code.
 %attr(755, root, root) %{python_sitearch}/%{libname}/%{libname}.so*
 
 %changelog
+* Sun Apr 6 2014 Yaniv Bronhaim <ybronhei@redhat.com> - 1.3
+- Tagging 1.3
+
 * Thu Jan 2 2014 Yaniv Bronhaim <ybronhei@redhat.com> - 1.2.3-7
 - Changing Obsoletes and Provides of vdsm-python-cpopen package
 
