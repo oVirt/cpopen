@@ -26,6 +26,7 @@ This is a simpler method of execing that doesn't go back to python after
 forking. This allows for faster safer exec.
 """
 
+import inspect
 import os
 import sys
 from subprocess import Popen, PIPE
@@ -99,7 +100,7 @@ class CPopen(Popen):
         os.close(errwrite)
         os.close(c2pwrite)
 
-    if sys.version_info[0:3] >= (2, 7, 6):
+    if 'to_close' in inspect.getargspec(Popen._execute_child).args:
         _execute_child = _execute_child_v276
     else:
         _execute_child = _execute_child_v275
