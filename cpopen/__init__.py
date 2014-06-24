@@ -102,7 +102,5 @@ class CPopen(Popen):
 
     if 'to_close' in inspect.getargspec(Popen._execute_child).args:
         _execute_child = _execute_child_v276
-    elif 'to_close' in inspect.getargspec(Popen._execute_child).args:
-        _execute_child = _execute_child_v276
     else:
         _execute_child = _execute_child_v275
