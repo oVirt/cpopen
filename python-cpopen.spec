@@ -4,7 +4,7 @@
 
 Name:           python-%{libname}
 Version:        1.3
-Release:        0%{?dist}
+Release:        1%{?dist}
 Summary:        Creates a sub-process in simpler safer manner
 
 License:        GPLv2+
@@ -37,6 +37,9 @@ code.
 %attr(755, root, root) %{python_sitearch}/%{libname}/%{libname}.so*
 
 %changelog
+* Tue Jun 24 2014 Yaniv Bronhaim <ybronhei@redhat.com> - 1.3.1
+- fix compatibility with F20's python 2.7.5-12
+
 * Sun Apr 6 2014 Yaniv Bronhaim <ybronhei@redhat.com> - 1.3
 - Tagging 1.3
 
