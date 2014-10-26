@@ -1,7 +1,8 @@
 from distutils.core import setup, Extension
 
 ext_modules = [Extension('cpopen.cpopen',
-                         sources=['cpopen/cpopen.c'])]
+                         sources=['cpopen/cpopen.c'],
+                         extra_link_args=['-fPIE', '-Wl,-z,relro,-z,now'])]
 
 setup(name='cpopen',
       version='1.3',
