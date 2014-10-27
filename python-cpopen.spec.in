@@ -37,6 +37,9 @@ CPOPEN_VERSION=%{version} %{__python} setup.py install --root $RPM_BUILD_ROOT
 %attr(755, root, root) %{python_sitearch}/%{libname}/%{libname}.so*
 
 %changelog
+* Mon Oct 27 2014 Saggi Mizrahi <smizrahi@redhat.com> - 1.4
+- Add RELRO to LDFLAGS
+
 * Wed Jul 30 2014 Yaniv Bronhaim <ybronhei@redhat.com> - 1.3-4
 - raising version to latest build
 - no changes in the code, just comparing to koji release number
