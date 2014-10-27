@@ -1,3 +1,4 @@
+import os
 from distutils.core import setup, Extension
 
 ext_modules = [Extension('cpopen.cpopen',
@@ -5,7 +6,7 @@ ext_modules = [Extension('cpopen.cpopen',
                          extra_link_args=['-fPIE', '-Wl,-z,relro,-z,now'])]
 
 setup(name='cpopen',
-      version='1.3',
+      version=os.environ["CPOPEN_VERSION"],
       description='Creates a subprocess in simpler safer manner',
       license="GNU GPLv2+",
       author='Yaniv Bronhaim',

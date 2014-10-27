@@ -21,7 +21,7 @@ ${SPECFILE}: ${SPECFILE}.in
 		$< > $@
 
 build:
-	python setup.py build
+	CPOPEN_VERSION=${VERSION} python setup.py build
 
 check: check-local
 
@@ -32,7 +32,7 @@ dist: $(TAR_DIST_LOCATION)
 
 $(TAR_DIST_LOCATION):
 	mkdir -p dist
-	python setup.py sdist
+	CPOPEN_VERSION=${VERSION} python setup.py sdist
 
 srpm: ${SPECFILE} $(TAR_DIST_LOCATION) dist
 	rpmbuild --define "_sourcedir `pwd`/${DIST}" -bs python-cpopen.spec
@@ -41,6 +41,6 @@ rpm: ${SPECFILE} ${TAR_DIST_LOCATION} dist
 	rpmbuild --define "_sourcedir `pwd`/${DIST}" -ba python-cpopen.spec
 
 clean:
-	python setup.py clean
+	CPOPEN_VERSION=${VERSION} python setup.py clean
 	rm -rf $(DIST)
 	rm -rf build
