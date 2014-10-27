@@ -1,23 +1,29 @@
-VERSION=1.3-4
+VERSION=1.3
+RELEASE=4
 NAME=cpopen
 FULL_NAME=${NAME}-${VERSION}
 TAR_FILE=${FULL_NAME}.tar.gz
-
-SOURCESDIR=$(shell rpm --eval "%{_sourcedir}")
 
 SPECFILE=python-cpopen.spec
 
 DIST=dist
 
 TAR_DIST_LOCATION=${DIST}/${TAR_FILE}
-TAR_RPM_LOCATION=${SOURCESDIR}/${TAR_FILE}
 
 all: build
 
-.PHONY: build rpm srpm ${TAR_DIST_LOCATION} check-local dist
+.PHONY: build rpm srpm ${TAR_DIST_LOCATION} check-local dist check
+
+${SPECFILE}: ${SPECFILE}.in
+	sed \
+		-e s/@VERSION@/${VERSION}/g \
+		-e s/@RELEASE@/${RELEASE}/g \
+		$< > $@
 
 build:
 	python setup.py build
+
+check: check-local
 
 check-local: build
 	cd tests && nosetests tests.py
@@ -28,14 +34,11 @@ $(TAR_DIST_LOCATION):
 	mkdir -p dist
 	python setup.py sdist
 
-${TAR_RPM_LOCATION}: ${TAR_DIST_LOCATION}
-	cp "$<" "$@"
+srpm: ${SPECFILE} $(TAR_DIST_LOCATION) dist
+	rpmbuild --define "_sourcedir `pwd`/${DIST}" -bs python-cpopen.spec
 
-srpm: ${SPECFILE} $(TAR_RPM_LOCATION)
-	rpmbuild -bs python-cpopen.spec
-
-rpm: ${SPECFILE} ${TAR_RPM_LOCATION}
-	rpmbuild -ba python-cpopen.spec
+rpm: ${SPECFILE} ${TAR_DIST_LOCATION} dist
+	rpmbuild --define "_sourcedir `pwd`/${DIST}" -ba python-cpopen.spec
 
 clean:
 	python setup.py clean

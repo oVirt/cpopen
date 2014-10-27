@@ -6,3 +6,4 @@ dist/
 *.pyc
 cpopen-*.tar.gz
 MANIFEST
+python-cpopen.spec

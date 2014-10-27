@@ -3,8 +3,8 @@
 %global libname cpopen
 
 Name:           python-%{libname}
-Version:        1.3
-Release:        4%{?dist}
+Version:        @VERSION@
+Release:        @RELEASE@%{?dist}
 Summary:        Creates a sub-process in simpler safer manner
 
 License:        GPLv2+
