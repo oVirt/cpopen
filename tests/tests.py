@@ -212,3 +212,11 @@ class TestCPopen(TestCase):
             self.assertEquals(ose.errno, errno.ENOENT)
         else:
             self.fail('OSError not raised')
+
+    def testNoStreams(self):
+        p = CPopen(['true'], stdin=None, stdout=None, stderr=None)
+        self.assertIsNone(p.stdin)
+        self.assertIsNone(p.stdout)
+        self.assertIsNone(p.stderr)
+        p.wait()
+        self.assertEquals(p.returncode, 0)
