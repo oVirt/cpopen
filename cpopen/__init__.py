@@ -50,35 +50,43 @@ class CPopen(Popen):
                        stdin=PIPE, stdout=PIPE,
                        stderr=PIPE)
 
-    def _execute_child_v276(self, args, executable, preexec_fn, close_fds,
-                       cwd, env, universal_newlines,
-                       startupinfo, creationflags, shell, to_close,
-                       p2cread, p2cwrite,
-                       c2pread, c2pwrite,
-                       errread, errwrite):
+    def _execute_child_v276(
+            self, args, executable, preexec_fn, close_fds,
+            cwd, env, universal_newlines,
+            startupinfo, creationflags, shell, to_close,
+            p2cread, p2cwrite,
+            c2pread, c2pwrite,
+            errread, errwrite,
+    ):
 
-        return self._execute_child_v275(args, executable, preexec_fn,
+        return self._execute_child_v275(
+            args, executable, preexec_fn,
             close_fds, cwd, env, universal_newlines,
             startupinfo, creationflags, shell,
             p2cread, p2cwrite,
             c2pread, c2pwrite,
-            errread, errwrite)
+            errread, errwrite,
+        )
 
-    def _execute_child_v275(self, args, executable, preexec_fn, close_fds,
-                       cwd, env, universal_newlines,
-                       startupinfo, creationflags, shell,
-                       p2cread, p2cwrite,
-                       c2pread, c2pwrite,
-                       errread, errwrite):
+    def _execute_child_v275(
+            self, args, executable, preexec_fn, close_fds,
+            cwd, env, universal_newlines,
+            startupinfo, creationflags, shell,
+            p2cread, p2cwrite,
+            c2pread, c2pwrite,
+            errread, errwrite,
+    ):
 
         try:
-            pid, stdin, stdout, stderr = createProcess(args, close_fds,
-                                                       p2cread, p2cwrite,
-                                                       c2pread, c2pwrite,
-                                                       errread, errwrite,
-                                                       cwd, env,
-                                                       self._deathSignal,
-                                                       self._childUmask)
+            pid, stdin, stdout, stderr = createProcess(
+                args, close_fds,
+                p2cread, p2cwrite,
+                c2pread, c2pwrite,
+                errread, errwrite,
+                cwd, env,
+                self._deathSignal,
+                self._childUmask,
+            )
 
             self.pid = pid
         except:
@@ -87,7 +95,11 @@ class CPopen(Popen):
             # Python 2.6, as Python 2.7 already does this when _execute_child
             # raises.
             t, v, tb = sys.exc_info()
-            for fd in (p2cread, p2cwrite, c2pread, c2pwrite, errread, errwrite):
+            for fd in (
+                p2cread, p2cwrite,
+                c2pread, c2pwrite,
+                errread, errwrite,
+            ):
                 try:
                     os.close(fd)
                 except:
