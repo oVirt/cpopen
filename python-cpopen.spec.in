@@ -37,8 +37,9 @@ CPOPEN_VERSION=%{version} %{__python} setup.py install --root $RPM_BUILD_ROOT
 %attr(755, root, root) %{python_sitearch}/%{libname}/%{libname}.so*
 
 %changelog
-* Mon Oct 27 2014 Saggi Mizrahi <smizrahi@redhat.com> - 1.4
+* Mon Oct 27 2014 Saggi Mizrahi <smizrahi@redhat.com> - 1.3-5
 - Add RELRO to LDFLAGS
+- New brew build with ppc
 
 * Wed Jul 30 2014 Yaniv Bronhaim <ybronhei@redhat.com> - 1.3-4
 - raising version to latest build
