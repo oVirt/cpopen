@@ -1,0 +1,5 @@
+cpopen (1.3.2-0) unstable; urgency=low
+
+  * Initial release. (Closes: 777672)
+
+ -- Simone Tiraboschi <stirabos@redhat.com>  Wed, 11 Feb 2015 11:35:13 +0100

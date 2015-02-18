@@ -2,3 +2,5 @@ include AUTHORS COPYING readme.md PKG-INFO MANIFEST
 include *.in
 include Makefile
 include tests/*.py
+include debian/*
+include debian/source/*

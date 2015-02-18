@@ -1,0 +1,14 @@
+Source: cpopen
+Maintainer: Simone Tiraboschi <stirabos@redhat.com>
+Section: python
+Priority: optional
+Build-Depends: python-all-dev (>= 2.6.6-3), debhelper (>= 9), dh-python
+Standards-Version: 3.9.6
+
+Package: python-cpopen
+Architecture: any
+Depends: ${misc:Depends}, ${python:Depends}, ${shlibs:Depends}
+Description: Creates a subprocess in simpler safer manner
+ A C reimplementation of the tricky bits of Python's Popen.
+ It is currently implemented in a very specific way and might break under
+ general use.
