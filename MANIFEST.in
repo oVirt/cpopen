@@ -1,1 +1,4 @@
-include AUTHORS COPYING readme.md
+include AUTHORS COPYING readme.md PKG-INFO MANIFEST
+include *.in
+include Makefile
+include tests/*.py
