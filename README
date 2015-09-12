@@ -22,6 +22,5 @@ proc.communicate()
 # Running the tests
 
 ```{.bash}
-cd tests
-nosetests tests.py
+nosetests tests/tests.py
 ```

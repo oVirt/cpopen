@@ -41,7 +41,8 @@ def distutils_dir_name(dname):
                     version=sys.version_info)
 
 
-BUILD_DIR = os.path.join("..", "build", distutils_dir_name("lib"))
+TESTS_DIR = os.path.dirname(__file__)
+BUILD_DIR = os.path.join(TESTS_DIR, "..", "build", distutils_dir_name("lib"))
 sys.path = [BUILD_DIR] + sys.path
 
 from cpopen import CPopen

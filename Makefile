@@ -26,7 +26,7 @@ build:
 check: check-local
 
 check-local: build
-	cd tests && nosetests tests.py
+	nosetests tests/tests.py
 
 dist: $(TAR_DIST_LOCATION)
 
