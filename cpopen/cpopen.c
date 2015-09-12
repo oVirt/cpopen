@@ -310,11 +310,12 @@ try_fork:
             }
             setenv("PWD", cwd, 1);
         }
-exec:
+
         if (hasUmask) {
             umask(mask);
         }
 
+exec:
         if (envp) {
             execvpe(argv[0], argv, envp);
         } else {
