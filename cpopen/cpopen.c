@@ -304,18 +304,12 @@ try_fork:
             }
         }
 
-exec:
         if (envp) {
             execvpe(argv[0], argv, envp);
         } else {
             execvp(argv[0], argv);
         }
 
-        if (errno == EINTR ||
-            errno == EAGAIN )
-        {
-            goto exec;
-        }
 sendErrno:
         if (write(errnofd[1], &errno, sizeof(int)) < 0) {
             _exit(errno);
