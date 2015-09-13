@@ -56,11 +56,9 @@ static int
 safeClose(int fd) {
     int rv;
 
-retry:
-    rv = close(fd);
-    if ((rv < 0) && (errno == EINTR)) {
-        goto retry;
-    }
+    do {
+        rv = close(fd);
+    } while ((rv < 0) && (errno == EINTR));
 
     return rv;
 }
