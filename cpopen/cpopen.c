@@ -238,14 +238,8 @@ createProcess(PyObject *self, PyObject *args)
         goto fail;
     }
 
-try_fork:
     cpid = fork();
     if (cpid < 0) {
-        if (errno == EAGAIN ||
-            errno == EINTR ) {
-            goto try_fork;
-        }
-
         PyErr_SetFromErrno(PyExc_OSError);
         goto fail;
     }
