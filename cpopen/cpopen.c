@@ -93,8 +93,8 @@ closeFDs(int errnofd) {
         safeClose(fdNum);
     }
 
+    /* Closes dp and the underlying dfd */
     closedir(dp);
-    safeClose(dfd);
 }
 
 static void
