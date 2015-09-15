@@ -97,6 +97,16 @@ class TestCPopen(TestCase):
         out, err = p.communicate()
         self.assertEqual(out, "key=value\n")
 
+    def testEnvUnicodeKey(self):
+        p = CPopen(["printenv"], env={u"\u05d0": "value"})
+        out, err = p.communicate()
+        self.assertEqual(out, "\xd7\x90=value\n")
+
+    def testEnvUnicodeValue(self):
+        p = CPopen(["printenv"], env={"key": u"\u05d0"})
+        out, err = p.communicate()
+        self.assertEqual(out, "key=\xd7\x90\n")
+
     def testCwd(self):
         cwd = "/proc"
         p = CPopen(["python", "-c", "import os; print os.getcwd()"],
