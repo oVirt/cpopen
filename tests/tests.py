@@ -93,9 +93,9 @@ class TestCPopen(TestCase):
             os.close(fds[1])
 
     def testEnv(self):
-        env = os.environ.copy()
-        env["TEST"] = "True"
-        self._subTest("env", [], env=env)
+        p = CPopen(["printenv"], env={"key": "value"})
+        out, err = p.communicate()
+        self.assertEqual(out, "key=value\n")
 
     def testCwd(self):
         cwd = "/proc"

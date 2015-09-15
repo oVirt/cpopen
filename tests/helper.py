@@ -15,9 +15,3 @@ elif cmd == "nofds":
         print "True"
     except:
         print "False"
-
-elif cmd == "env":
-    try:
-        print os.environ.get("TEST", "False")
-    except:
-        print "False"
