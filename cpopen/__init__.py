@@ -41,9 +41,6 @@ class CPopen(Popen):
         if not isinstance(args, list):
             args = list(args)
 
-        if env is not None and not isinstance(env, list):
-            env = list(("=".join(item) for item in env.iteritems()))
-
         self._childUmask = childUmask
         self._deathSignal = int(deathSignal)
         Popen.__init__(self, args,
@@ -77,6 +74,9 @@ class CPopen(Popen):
             c2pread, c2pwrite,
             errread, errwrite,
     ):
+
+        if env is not None and not isinstance(env, list):
+            env = list(("=".join(item) for item in env.iteritems()))
 
         try:
             pid, stdin, stdout, stderr = createProcess(
