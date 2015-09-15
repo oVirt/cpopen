@@ -194,7 +194,7 @@ class TestCPopen(TestCase):
         self.assertEqual(procPtr[0].wait(), -signal.SIGKILL)
 
     def testUmaskChange(self):
-        p = CPopen(['umask'], childUmask=0o007)
+        p = CPopen(['sh', '-c', 'umask'], childUmask=0o007)
         p.wait()
         out = p.stdout.readlines()
         self.assertEquals(out[0].strip(), '0007')
