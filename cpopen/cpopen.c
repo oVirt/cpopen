@@ -25,6 +25,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <sys/prctl.h>
+#include <unistd.h>
 
 static PyObject *createProcess(PyObject *self, PyObject *args);
 static PyMethodDef CreateProcessMethods[];
@@ -62,22 +63,6 @@ retry:
     }
 
     return rv;
-}
-
-static int
-setCloseOnExec(int fd) {
-    int flags;
-
-    flags = fcntl(fd, F_GETFD);
-    if (flags == -1) {
-      return -1;
-    }
-
-    if (fcntl(fd, F_SETFD, flags | FD_CLOEXEC) == -1) {
-      return -1;
-    }
-
-    return 0;
 }
 
 /* Closes all open FDs except for stdin, stdout and stderr */
@@ -246,7 +231,7 @@ createProcess(PyObject *self, PyObject *args)
         hasUmask = 0;
     }
 
-    if(pipe(errnofd) < 0) {
+    if(pipe2(errnofd, O_CLOEXEC) < 0) {
         PyErr_SetFromErrno(PyExc_OSError);
         goto fail;
     }
@@ -294,10 +279,6 @@ try_fork:
             if (childErrno != 0) {
                 exit(-1);
             }
-        }
-
-        if (setCloseOnExec(errnofd[1]) < 0) {
-            goto sendErrno;
         }
 
         if (close_fds) {
