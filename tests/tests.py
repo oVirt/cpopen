@@ -225,9 +225,9 @@ class TestCPopen(TestCase):
 
     def testNoStreams(self):
         p = CPopen(['true'], stdin=None, stdout=None, stderr=None)
-        self.assertIsNone(p.stdin)
-        self.assertIsNone(p.stdout)
-        self.assertIsNone(p.stderr)
+        self.assertEqual(p.stdin, None)
+        self.assertEqual(p.stdout, None)
+        self.assertEqual(p.stderr, None)
         p.wait()
         self.assertEquals(p.returncode, 0)
 
