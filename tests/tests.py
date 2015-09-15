@@ -19,6 +19,7 @@
 #
 import errno
 import os
+import platform
 import sys
 import stat
 import subprocess
@@ -29,16 +30,16 @@ import time
 import tempfile
 import shutil
 import signal
-import sysconfig
 
 from unittest import TestCase
 
 
 def distutils_dir_name(dname):
     """Returns the name of a distutils build directory"""
-    f = "{dirname}.{platform}-{version[0]}.{version[1]}"
+    f = "{dirname}.{platform}-{machine}-{version[0]}.{version[1]}"
     return f.format(dirname=dname,
-                    platform=sysconfig.get_platform(),
+                    platform=platform.system().lower(),
+                    machine=platform.machine(),
                     version=sys.version_info)
 
 
