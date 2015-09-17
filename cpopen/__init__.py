@@ -34,19 +34,33 @@ from subprocess import Popen, PIPE
 from cpopen import createProcess
 
 
+SUPPORTS_RESTORE_SIGPIPE = (
+    'restore_sigpipe' in inspect.getargspec(Popen.__init__).args
+)
+
+
 class CPopen(Popen):
+
     def __init__(self, args, close_fds=False, cwd=None, env=None,
                  deathSignal=0, childUmask=None,
-                 stdin=PIPE, stdout=PIPE, stderr=PIPE):
+                 stdin=PIPE, stdout=PIPE, stderr=PIPE,
+                 restore_sigpipe=False):
         if not isinstance(args, list):
             args = list(args)
 
         self._childUmask = childUmask
         self._deathSignal = int(deathSignal)
+
+        if SUPPORTS_RESTORE_SIGPIPE:
+            kw = {'restore_sigpipe': restore_sigpipe}
+        else:
+            kw = {}
+
         Popen.__init__(self, args,
                        close_fds=close_fds, cwd=cwd, env=env,
                        stdin=stdin, stdout=stdout,
-                       stderr=stderr)
+                       stderr=stderr,
+                       **kw)
 
     def _execute_child_v276(
             self, args, executable, preexec_fn, close_fds,
@@ -55,6 +69,7 @@ class CPopen(Popen):
             p2cread, p2cwrite,
             c2pread, c2pwrite,
             errread, errwrite,
+            restore_sigpipe=False
     ):
 
         return self._execute_child_v275(
@@ -64,6 +79,7 @@ class CPopen(Popen):
             p2cread, p2cwrite,
             c2pread, c2pwrite,
             errread, errwrite,
+            restore_sigpipe=restore_sigpipe
         )
 
     def _execute_child_v275(
@@ -73,6 +89,7 @@ class CPopen(Popen):
             p2cread, p2cwrite,
             c2pread, c2pwrite,
             errread, errwrite,
+            restore_sigpipe=False
     ):
 
         if env is not None and not isinstance(env, list):
@@ -87,6 +104,7 @@ class CPopen(Popen):
                 cwd, env,
                 self._deathSignal,
                 self._childUmask,
+                restore_sigpipe
             )
 
             self.pid = pid

@@ -21,6 +21,7 @@
 #include <Python.h>
 
 #include <dirent.h>
+#include <signal.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -30,6 +31,7 @@
 static PyObject *createProcess(PyObject *self, PyObject *args);
 static PyMethodDef CreateProcessMethods[];
 static void closeFDs(int errnofd);
+static int restoreSIGPIPEDefaultHandler(void);
 
 /* Python boilerplate */
 static PyMethodDef
@@ -96,6 +98,17 @@ closeFDs(int errnofd) {
     /* Closes dp and the underlying dfd */
     closedir(dp);
 }
+
+static int
+restoreSIGPIPEDefaultHandler(void) {
+    struct sigaction sa;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = 0;
+    sa.sa_handler = SIG_DFL;
+
+    return sigaction(SIGPIPE, &sa, NULL);
+}
+
 
 static void
 freeStringArray(char** arr) {
@@ -202,12 +215,15 @@ createProcess(PyObject *self, PyObject *args)
     int hasUmask = 0;
     int mask;
 
-    if (!PyArg_ParseTuple(args, "O!iiiiiiizOiO:createProcess;",
+    int restore_sigpipe = 0;
+
+    if (!PyArg_ParseTuple(args, "O!iiiiiiizOiOi:createProcess;",
                 &PyList_Type, &pyArgList, &close_fds,
                 &outfd[0], &outfd[1],
                 &in1fd[0], &in1fd[1],
                 &in2fd[0], &in2fd[1],
-                &cwd, &pyEnvList, &deathSignal, &childUmask)) {
+                &cwd, &pyEnvList, &deathSignal, &childUmask,
+                &restore_sigpipe)) {
         return NULL;
     }
 
@@ -292,6 +308,12 @@ try_fork:
 
         if (hasUmask) {
             umask(mask);
+        }
+
+        if (restore_sigpipe) {
+            if (restoreSIGPIPEDefaultHandler() < 0) {
+                goto sendErrno;
+            }
         }
 
 exec:

@@ -28,6 +28,7 @@ import threading
 import time
 import tempfile
 import shutil
+import signal
 import sysconfig
 
 from unittest import TestCase
@@ -45,6 +46,7 @@ TESTS_DIR = os.path.dirname(__file__)
 BUILD_DIR = os.path.join(TESTS_DIR, "..", "build", distutils_dir_name("lib"))
 sys.path = [BUILD_DIR] + sys.path
 
+import cpopen
 from cpopen import CPopen
 
 EXT_ECHO = "/bin/echo"
@@ -227,3 +229,26 @@ class TestCPopen(TestCase):
         self.assertIsNone(p.stderr)
         p.wait()
         self.assertEquals(p.returncode, 0)
+
+    # references about pipe/SIGPIPE tests:
+    # https://bugzilla.redhat.com/show_bug.cgi?id=1117751#c4
+    # http://bugs.python.org/issue1652
+    def testBrokenPipe(self):
+        p = CPopen(["sleep", "1"])
+        try:
+            p.send_signal(signal.SIGPIPE)
+        finally:
+            p.kill()
+        p.wait()
+        self.assertEqual(p.returncode, -signal.SIGKILL)
+
+    def testBrokenPipeSIGPIPERestored(self):
+        if not cpopen.SUPPORTS_RESTORE_SIGPIPE:
+            raise SkipTest("subprocess module does not support restore_sigpipe")
+        p = CPopen(["sleep", "1"], restore_sigpipe=True)
+        try:
+            p.send_signal(signal.SIGPIPE)
+        finally:
+            p.kill()
+        p.wait()
+        self.assertEqual(p.returncode, -signal.SIGPIPE)
