@@ -57,19 +57,19 @@ class TestCPopen(TestCase):
     def testEcho(self):
         data = "Hello"
         p = CPopen([EXT_ECHO, "-n", data])
-        p.wait()
+        out, err = p.communicate()
         self.assertTrue(p.returncode == 0,
                         "Process failed: %s" % os.strerror(p.returncode))
-        self.assertEquals(p.stdout.read(), data)
+        self.assertEquals(out, data)
 
     def testCat(self):
         path = "/etc/passwd"
         p = CPopen(["cat", path])
-        p.wait()
+        out, err = p.communicate()
         self.assertTrue(p.returncode == 0,
                         "Process failed: %s" % os.strerror(p.returncode))
         with open(path, "r") as f:
-            self.assertEquals(p.stdout.read(), f.read())
+            self.assertEquals(out, f.read())
 
     def testCloseFDs(self):
         with open("/dev/zero") as f:
@@ -112,10 +112,10 @@ class TestCPopen(TestCase):
         cwd = "/proc"
         p = CPopen(["python", "-c", "import os; print os.getcwd()"],
                    cwd=cwd)
-        p.wait()
+        out, err = p.communicate()
         self.assertTrue(p.returncode == 0,
                         "Process failed: %s" % os.strerror(p.returncode))
-        self.assertEquals(p.stdout.read().strip(), cwd)
+        self.assertEquals(out.strip(), cwd)
 
     def testRunNonExecutable(self):
         self.assertRaises(OSError, CPopen, ["/tmp"])
@@ -129,11 +129,11 @@ class TestCPopen(TestCase):
         cmd = [EXT_ECHO, "-n", data]
 
         p = CPopen(cmd)
-        p.wait()
+        out, err = p.communicate()
         p2 = subprocess.Popen(cmd, stdin=subprocess.PIPE,
                               stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        p2.wait()
-        self.assertEquals(p.stdout.read(), p2.stdout.read())
+        out2, err2 = p2.communicate()
+        self.assertEquals(out, out2)
 
     def testNonASCIIUnicodeArg(self):
         data = u'\u05e9\u05dc\u05d5\u05dd'
@@ -145,23 +145,20 @@ class TestCPopen(TestCase):
         cmd = [EXT_ECHO, "-n", data]
 
         p = CPopen(cmd)
-        p.wait()
+        out, err = p.communicate()
         p2 = subprocess.Popen(cmd, stdin=subprocess.PIPE,
                               stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        p2.wait()
-        self.assertEquals(p.stdout.read(), p2.stdout.read())
+        out2, err2 = p2.communicate()
+        self.assertEquals(out, out2)
 
     def testStdin(self):
         data = "Hello World"
         p = CPopen(["cat"])
-        p.stdin.write(data)
-        p.stdin.flush()
-        p.stdin.close()
-        p.wait()
+        out, err = p.communicate(data)
         self.assertTrue(p.returncode == 0,
                         "Process failed: %s" % os.strerror(p.returncode))
 
-        self.assertEquals(p.stdout.read(), data)
+        self.assertEquals(out, data)
 
     def testStdinEpoll(self):
         import select
@@ -195,9 +192,8 @@ class TestCPopen(TestCase):
 
     def testUmaskChange(self):
         p = CPopen(['sh', '-c', 'umask'], childUmask=0o007)
-        p.wait()
-        out = p.stdout.readlines()
-        self.assertEquals(out[0].strip(), '0007')
+        out, err = p.communicate()
+        self.assertEquals(out.splitlines()[0].strip(), '0007')
 
     def testUmaskTmpfile(self):
         tmp_dir = tempfile.mkdtemp()
