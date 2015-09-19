@@ -47,7 +47,6 @@ sys.path = [BUILD_DIR] + sys.path
 from cpopen import CPopen
 
 EXT_ECHO = "/bin/echo"
-EXT_HELPER = os.path.join(os.path.dirname(__file__), 'helper.py')
 
 
 class TestCPopen(TestCase):
@@ -68,29 +67,25 @@ class TestCPopen(TestCase):
         with open(path, "r") as f:
             self.assertEquals(p.stdout.read(), f.read())
 
-    def _subTest(self, name, params, *args, **kwargs):
-        p = CPopen(["python", EXT_HELPER, name] + params,
-                   *args, **kwargs)
-        p.wait()
-        self.assertTrue(p.returncode == 0,
-                        "Process failed: %s" % os.strerror(p.returncode))
-        self.assertEquals(p.stdout.read().strip(), "True")
-
     def testCloseFDs(self):
-        fds = os.pipe()
-        try:
-            self._subTest("fds", [str(fds[1])], close_fds=True)
-        finally:
-            os.close(fds[0])
-            os.close(fds[1])
+        with open("/dev/zero") as f:
+            p = CPopen(["sleep", "1"], close_fds=True)
+            try:
+                child_fds = set(os.listdir("/proc/%s/fd" % p.pid))
+            finally:
+                p.kill()
+                p.wait()
+            self.assertEqual(child_fds, set(["0", "1", "2"]))
 
     def testNoCloseFds(self):
-        fds = os.pipe()
-        try:
-            self._subTest("nofds", [str(fds[1])], close_fds=False)
-        finally:
-            os.close(fds[0])
-            os.close(fds[1])
+        with open("/dev/zero") as f:
+            p = CPopen(["sleep", "1"], close_fds=False)
+            try:
+                child_fds = set(os.listdir("/proc/%s/fd" % p.pid))
+            finally:
+                p.kill()
+                p.wait()
+            self.assertEqual(child_fds, set(["0", "1", "2", str(f.fileno())]))
 
     def testEnv(self):
         p = CPopen(["printenv"], env={"key": "value"})
