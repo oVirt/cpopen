@@ -27,7 +27,7 @@ import signal
 import threading
 import time
 import tempfile
-import posix
+import shutil
 import sysconfig
 
 from unittest import TestCase
@@ -198,18 +198,19 @@ class TestCPopen(TestCase):
 
     def testUmaskTmpfile(self):
         tmp_dir = tempfile.mkdtemp()
-        name = os.path.join(tmp_dir, "file.txt")
-        p = CPopen(['touch', name], childUmask=0o007)
-        p.wait()
-        data = os.stat(name)
-        os.unlink(name)
-        self.assertTrue(data.st_mode & stat.S_IROTH == 0,
-                        "%s is world-readable" % name)
-        self.assertTrue(data.st_mode & stat.S_IWOTH == 0,
-                        "%s is world-writeable" % name)
-        self.assertTrue(data.st_mode & stat.S_IXOTH == 0,
-                        "%s is world-executable" % name)
-        posix.rmdir(tmp_dir)
+        try:
+            name = os.path.join(tmp_dir, "file.txt")
+            p = CPopen(['touch', name], childUmask=0o007)
+            p.wait()
+            data = os.stat(name)
+            self.assertTrue(data.st_mode & stat.S_IROTH == 0,
+                            "%s is world-readable" % name)
+            self.assertTrue(data.st_mode & stat.S_IWOTH == 0,
+                            "%s is world-writeable" % name)
+            self.assertTrue(data.st_mode & stat.S_IXOTH == 0,
+                            "%s is world-executable" % name)
+        finally:
+            shutil.rmtree(tmp_dir)
 
     def testNoEnt(self):
         try:
