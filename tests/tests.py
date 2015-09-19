@@ -179,15 +179,13 @@ class TestCPopen(TestCase):
         procPtr = [None]
 
         def spawn():
-            procPtr[0] = CPopen(["sleep", "10"],
+            procPtr[0] = CPopen(["sleep", "1"],
                                 deathSignal=signal.SIGKILL)
 
         t = threading.Thread(target=spawn)
         t.start()
         t.join()
-        start = time.time()
-        procPtr[0].wait()
-        self.assertTrue(time.time() - start < 1)
+        self.assertEqual(procPtr[0].wait(), -signal.SIGKILL)
 
     def testUmaskChange(self):
         p = CPopen(['umask'], childUmask=0o007)
