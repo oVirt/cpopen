@@ -86,7 +86,9 @@ class TestCPopen(TestCase):
             finally:
                 p.kill()
                 p.wait()
-            self.assertEqual(child_fds, set(["0", "1", "2", str(f.fileno())]))
+            # We cannot know which fds will be inherited in the child since the
+            # test framework may open some fds.
+            self.assertTrue(str(f.fileno()) in child_fds)
 
     def testEnv(self):
         p = CPopen(["printenv"], env={"key": "value"})
