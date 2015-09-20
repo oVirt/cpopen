@@ -53,18 +53,6 @@ initcpopen(void)
         return;
 }
 
-/* Just like close() but retries on interrupt */
-static int
-safeClose(int fd) {
-    int rv;
-
-    do {
-        rv = close(fd);
-    } while ((rv < 0) && (errno == EINTR));
-
-    return rv;
-}
-
 /* Closes all open FDs except for stdin, stdout and stderr */
 static void
 closeFDs(int errnofd) {
@@ -92,7 +80,7 @@ closeFDs(int errnofd) {
             continue;
         }
 
-        safeClose(fdNum);
+        close(fdNum);
     }
 
     /* Closes dp and the underlying dfd */
@@ -263,21 +251,21 @@ try_fork:
     }
 
     if (!cpid) {
-        safeClose(0);
-        safeClose(1);
-        safeClose(2);
+        close(0);
+        close(1);
+        close(2);
 
         dup2(outfd[0], 0);
         dup2(in1fd[1], 1);
         dup2(in2fd[1], 2);
 
-        safeClose(outfd[0]);
-        safeClose(outfd[1]);
-        safeClose(in1fd[0]);
-        safeClose(in1fd[1]);
-        safeClose(in2fd[0]);
-        safeClose(in2fd[1]);
-        safeClose(errnofd[0]);
+        close(outfd[0]);
+        close(outfd[1]);
+        close(in1fd[0]);
+        close(in1fd[1]);
+        close(in2fd[0]);
+        close(in2fd[1]);
+        close(errnofd[0]);
 
         if (deathSignal) {
             childErrno = prctl(PR_SET_PDEATHSIG, deathSignal);
@@ -335,7 +323,7 @@ sendErrno:
         _exit(-1);
     }
 
-    safeClose(errnofd[1]);
+    close(errnofd[1]);
     errnofd[1] = -1;
 
     if (deathSignal) {
@@ -374,7 +362,7 @@ sendErrno:
         goto fail;
     }
 
-    safeClose(errnofd[0]);
+    close(errnofd[0]);
     errnofd[0] = -1;
 
     /* From this point errors shouldn't occur, if they do something is very
@@ -398,11 +386,11 @@ fail:
     }
 
     if (errnofd[0] >= 0) {
-        safeClose(errnofd[0]);
+        close(errnofd[0]);
     }
 
     if (errnofd[1] >= 0) {
-        safeClose(errnofd[1]);
+        close(errnofd[1]);
     }
 
     return NULL;
