@@ -287,11 +287,11 @@ try_fork:
             /* Check that parent did not already die between fork and us
              * setting the death signal */
             if (write(errnofd[1], &childErrno, sizeof(int)) < sizeof(int)) {
-                exit(-1);
+                _exit(-1);
             }
 
             if (childErrno != 0) {
-                exit(-1);
+                _exit(-1);
             }
         }
 
@@ -330,9 +330,9 @@ exec:
         }
 sendErrno:
         if (write(errnofd[1], &errno, sizeof(int)) < 0) {
-            exit(errno);
+            _exit(errno);
         }
-        exit(-1);
+        _exit(-1);
     }
 
     safeClose(errnofd[1]);
