@@ -48,7 +48,7 @@ BUILD_DIR = os.path.join(TESTS_DIR, "..", "build", distutils_dir_name("lib"))
 sys.path = [BUILD_DIR] + sys.path
 
 import cpopen
-from cpopen import CPopen
+from cpopen import CPopen, PIPE
 
 EXT_ECHO = "/bin/echo"
 
@@ -253,3 +253,50 @@ class TestCPopen(TestCase):
             p.kill()
         p.wait()
         self.assertEqual(p.returncode, -signal.SIGPIPE)
+
+    def testUserFd(self):
+        data = "it works!"
+        with tempfile.TemporaryFile() as f:
+            p = CPopen(["echo", "-n", data], stdout=f.fileno())
+            p.wait()
+            f.seek(0)
+            self.assertEqual(data, f.read())
+
+    def testUserFdNoClose(self):
+        with tempfile.TemporaryFile() as f:
+            self.assertRaises(OSError, CPopen, ["echo", "fail"],
+                              stdout=f.fileno(), cwd="/nodir")
+            self.assertEqual("", f.read())
+
+    def testUserFile(self):
+        data = "it works!"
+        with tempfile.TemporaryFile() as f:
+            p = CPopen(["echo", "-n", data], stdout=f)
+            p.wait()
+            f.seek(0)
+            self.assertEqual(data, f.read())
+
+    def testUserFileNoClose(self):
+        with tempfile.TemporaryFile() as f:
+            self.assertRaises(OSError, CPopen, ["echo", "fail"], stdout=f,
+                              cwd="/nodir")
+            self.assertEqual("", f.read())
+
+    def testUserFileWithRedirect(self):
+        data = "it works!"
+        with tempfile.TemporaryFile() as f:
+            p = CPopen(["echo", "-n", data], stdout=f, stderr=f)
+            p.wait()
+            f.seek(0)
+            self.assertEqual(data, f.read())
+
+    def testPipeline(self):
+        # echo -n 'it works!' | cat
+        data = "it works!"
+        p2 = CPopen(["cat"], stdin=PIPE, stdout=PIPE)
+        try:
+            p1 = CPopen(["echo", "-n", data], stdin=PIPE, stdout=p2.stdin)
+            p1.wait()
+        finally:
+            out, err = p2.communicate()
+        self.assertEqual(data, out)
