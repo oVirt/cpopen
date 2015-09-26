@@ -79,7 +79,8 @@ class CPopen(Popen):
             p2cread, p2cwrite,
             c2pread, c2pwrite,
             errread, errwrite,
-            restore_sigpipe=restore_sigpipe
+            restore_sigpipe=restore_sigpipe,
+            _to_close=to_close
         )
 
     def _execute_child_v275(
@@ -89,11 +90,21 @@ class CPopen(Popen):
             p2cread, p2cwrite,
             c2pread, c2pwrite,
             errread, errwrite,
-            restore_sigpipe=False
+            restore_sigpipe=False,
+            _to_close=None
     ):
 
         if env is not None and not isinstance(env, list):
             env = list(("=".join(item) for item in env.iteritems()))
+
+        if _to_close is None:
+            _to_close = self._fds_to_close(p2cread, p2cwrite,
+                                           c2pread, c2pwrite,
+                                           errread, errwrite)
+
+        def close_fd(fd):
+            _to_close.remove(fd)
+            os.close(fd)
 
         try:
             pid, stdin, stdout, stderr = createProcess(
@@ -114,27 +125,42 @@ class CPopen(Popen):
             # Python 2.6, as Python 2.7 already does this when _execute_child
             # raises.
             t, v, tb = sys.exc_info()
-            for fd in (
-                p2cread, p2cwrite,
-                c2pread, c2pwrite,
-                errread, errwrite,
-            ):
+            for fd in list(_to_close):
                 try:
-                    if fd:
-                        os.close(fd)
+                    close_fd(fd)
                 except OSError:
                     pass
             raise t, v, tb
 
         # If child was started, close the unused fds on the parent side. Note
         # that we don't want to hide exceptions here.
-        for fd in (
-            p2cread,
-            errwrite,
-            c2pwrite
-        ):
-            if fd:
-                os.close(fd)
+        for fd in (p2cread, c2pwrite, errwrite):
+            if fd in _to_close:
+                close_fd(fd)
+
+    def _fds_to_close(self, p2cread, p2cwrite,
+                      c2pread, c2pwrite,
+                      errread, errwrite):
+        """
+        Return a set of fds owned by us and may be closed for version of Python
+        that do not provide the to_close argument in _execute_child.
+
+        When calling Popen with PIPE, we create new pipe, and both sides of the
+        pipe may be closed.
+
+        When calling Popen with existing file descriptor or file like object,
+        one side of the pipe will be None, and we may not close the other
+        side, since it belongs to the caller.
+        """
+        to_close = set()
+
+        for fdpair in ((p2cread, p2cwrite),
+                       (c2pread, c2pwrite),
+                       (errread, errwrite)):
+            if None not in fdpair:
+                to_close.update(fdpair)
+
+        return to_close
 
     if 'to_close' in inspect.getargspec(Popen._execute_child).args:
         _execute_child = _execute_child_v276
