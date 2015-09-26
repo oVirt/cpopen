@@ -20,18 +20,18 @@
 import errno
 import os
 import platform
-import sys
-import stat
-import subprocess
-from nose.plugins.skip import SkipTest
-import signal
-import threading
-import time
-import tempfile
 import shutil
 import signal
+import signal
+import stat
+import subprocess
+import sys
+import tempfile
+import threading
+import time
 
 from unittest import TestCase
+from nose.plugins.skip import SkipTest
 
 
 def distutils_dir_name(dname):
