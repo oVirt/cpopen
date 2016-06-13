@@ -227,6 +227,34 @@ class TestCPopen(TestCase):
         p.wait()
         self.assertEquals(p.returncode, 0)
 
+    def testInheritParentFds(self):
+        # From Python docs: With the default settings of None, no redirection
+        # will occur; the child's file handles will be inherited from the
+        # parent.
+        with open("/dev/zero") as f:
+            p = CPopen(["sleep", "1"], stdin=None, stdout=None, stderr=None,
+                       close_fds=False)
+            try:
+                child_fds = set(os.listdir("/proc/%s/fd" % p.pid))
+            finally:
+                p.kill()
+                p.wait()
+            expected_fds = set(["0", "1", "2", str(f.fileno())])
+        self.assertEqual(child_fds, expected_fds)
+
+    def testInheritParentFdsCloseFds(self):
+        # From Python docs: If close_fds is true, all file descriptors except
+        # 0, 1 and 2 will be closed before the child process is executed.
+        with open("/dev/zero") as f:
+            p = CPopen(["sleep", "1"], stdin=None, stdout=None, stderr=None,
+                       close_fds=True)
+            try:
+                child_fds = set(os.listdir("/proc/%s/fd" % p.pid))
+            finally:
+                p.kill()
+                p.wait()
+        self.assertEqual(child_fds, set(["0", "1", "2"]))
+
     # references about pipe/SIGPIPE tests:
     # https://bugzilla.redhat.com/show_bug.cgi?id=1117751#c4
     # http://bugs.python.org/issue1652

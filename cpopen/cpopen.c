@@ -170,6 +170,28 @@ pyTryIntToLong(PyObject *intNum, int *gotIt) {
     return value;
 }
 
+static int
+unsetCloseOnExec(int fd) {
+    int flags;
+    flags = fcntl(fd, F_GETFD, 0);
+    return fcntl(fd, F_SETFD, flags & (~FD_CLOEXEC));
+}
+
+/* dup2 oldfd to newfd, disabling close-on-exec flag for newfd.
+ *
+ * dup2 unset newfd close-on-exec flag, but it does nothing if old fd is
+ * invalid, or when oldfd is equal to newfd.  In this case, if newfd
+ * close-on-exec flag was set, the fd will be closed after execv the child,
+ * which is not very useful for the child.
+ */
+static int
+dupFdForChild(int oldfd, int newfd) {
+    if (oldfd == -1 || oldfd == newfd)
+        return unsetCloseOnExec(newfd);
+    else
+        return dup2(oldfd, newfd);
+}
+
 /* Python's implementation of Popen forks back to python before execing.
  * Forking a python proc is a very complex and volatile process.
  *
@@ -245,13 +267,9 @@ createProcess(PyObject *self, PyObject *args)
     }
 
     if (!cpid) {
-        close(0);
-        close(1);
-        close(2);
-
-        dup2(outfd[0], 0);
-        dup2(in1fd[1], 1);
-        dup2(in2fd[1], 2);
+        dupFdForChild(outfd[0], 0);
+        dupFdForChild(in1fd[1], 1);
+        dupFdForChild(in2fd[1], 2);
 
         close(outfd[0]);
         close(outfd[1]);
