@@ -18,6 +18,7 @@
 # Refer to the README and COPYING files for full details of the license
 #
 import errno
+import fcntl
 import os
 import platform
 import shutil
@@ -255,6 +256,35 @@ class TestCPopen(TestCase):
                 p.wait()
         self.assertEqual(child_fds, set(["0", "1", "2"]))
 
+    def testCloseOnExecStdin(self):
+        # Unset close-on-exec on stdin fd
+        data = "data"
+        with tempfile.NamedTemporaryFile() as f:
+            f.write(data)
+            f.flush()
+            set_close_on_exec(f.fileno())
+            p = CPopen(["cat", f.name], stdin=f.fileno(), stdout=PIPE)
+            out, err = p.communicate()
+            self.assertEqual(out, data)
+
+    def testCloseOnExecStdout(self):
+        # Unset close-on-exec on stdout fd
+        with tempfile.NamedTemporaryFile() as f:
+            set_close_on_exec(f.fileno())
+            p = CPopen(["sh", "-c", "echo -n data >&1"], stdout=f.fileno())
+            p.wait()
+            f.seek(0)
+            self.assertEqual(f.read(), "data")
+
+    def testCloseOnExecStderr(self):
+        # Unset close-on-exec on stderr fd
+        with tempfile.NamedTemporaryFile() as f:
+            set_close_on_exec(f.fileno())
+            p = CPopen(["sh", "-c", "echo -n data >&2"], stderr=f.fileno())
+            p.wait()
+            f.seek(0)
+            self.assertEqual(f.read(), "data")
+
     # references about pipe/SIGPIPE tests:
     # https://bugzilla.redhat.com/show_bug.cgi?id=1117751#c4
     # http://bugs.python.org/issue1652
@@ -324,3 +354,9 @@ class TestCPopen(TestCase):
         finally:
             out, err = p2.communicate()
         self.assertEqual(data, out)
+
+
+def set_close_on_exec(fd):
+    flags = fcntl.fcntl(fd, fcntl.F_GETFD)
+    flags |= fcntl.FD_CLOEXEC
+    return fcntl.fcntl(fd, fcntl.F_SETFD, flags)
