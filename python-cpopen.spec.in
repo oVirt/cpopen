@@ -37,6 +37,9 @@ CPOPEN_VERSION=%{version} %{__python} setup.py install --root $RPM_BUILD_ROOT
 %attr(755, root, root) %{python_sitearch}/%{libname}/%{libname}.so*
 
 %changelog
+* Sun Jul 17 2016 Yaniv Bronhaim <ybronhei@redhat.com> - 1.5
+- 1.5 includes - 7163e79 Do not close inherited fds from parent
+
 * Thu Sep 24 2015 Yaniv Bronhaim <ybronhei@redhat.com> - 1.4
 * Adding sigpipe handler - fix compatibility with python 2.7.5-33
 
