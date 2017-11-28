@@ -5,6 +5,11 @@ A C reimplementation of the tricky bits of Python's Popen.
 It is currently implemented in a very specific way and might break under
 general use.
 
+NOTE: This object can be replaced by subprocess32 in python2.7. subprocess32
+package covers all required fix that already part of python3 and we have in
+cpopen. cpopen adds more options such as deathSignal, but those are not
+standard in popen interface anyway.
+
 # TODO
 
 * Support string invocation - Currently only support array invocation
