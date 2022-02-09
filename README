@@ -1,5 +1,9 @@
 # CPopen
 
+> IMPORTANT: This project has been dropped from oVirt.
+>
+> Keeping the following section only for reference.
+
 A C reimplementation of the tricky bits of Python's Popen.
 
 It is currently implemented in a very specific way and might break under
